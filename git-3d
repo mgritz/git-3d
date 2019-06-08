@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+
+import sys
+import os
+import git
+
+repodir = os.getcwd()
+if len(sys.argv) == 2 :
+    repodir = sys.argv[1]
+
+print("git-3d has started for" + repodir)
+
+# load git repository
+repo = git.Repo(repodir)
+assert not repo.bare
+
+commit_list = list(repo.iter_commits())
+
+print("Commit list:")
+for c in commit_list :
+    ob = repo.commit(c)
+    print(str(ob)[0:5] + ": " + str(ob.message).split('\n',1)[0])

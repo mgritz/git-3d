@@ -4,6 +4,14 @@ import sys
 import os
 import git
 
+from pyvis.network import Network
+
+def shorthash(commit) :
+    return str(commit)[0:5]
+
+def shortmsg(commit) :
+    return str(commit.message).split('\n',1)[0]
+
 repodir = os.getcwd()
 if len(sys.argv) == 2 :
     repodir = sys.argv[1]
@@ -14,9 +22,22 @@ print("git-3d has started for" + repodir)
 repo = git.Repo(repodir)
 assert not repo.bare
 
-commit_list = list(repo.iter_commits())
+# init network graph object
+net = Network()
 
+# load all commits
+commit_list = list(repo.iter_commits())
 print("Commit list:")
 for c in commit_list :
-    ob = repo.commit(c)
-    print(str(ob)[0:5] + ": " + str(ob.message).split('\n',1)[0])
+    print(shorthash(c) + ": " + shortmsg(c))
+    net.add_node(str(c), label=shortmsg(c) )
+
+# add edges between commits
+print("Adding edges:")
+for c in commit_list :
+    for p in c.parents :
+        print(shorthash(c) + " -> " + shorthash(p))
+        net.add_edge(str(c), str(p))
+
+print("Showing Graph:")
+net.show("/tmp/git3d-" + repodir.split('/')[-1] + ".html")

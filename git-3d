@@ -3,7 +3,7 @@
 import sys
 import os
 import git
-
+import datetime
 from pyvis.network import Network
 
 def shorthash(commit) :
@@ -23,14 +23,23 @@ repo = git.Repo(repodir)
 assert not repo.bare
 
 # init network graph object
-net = Network()
+net = Network(height=800, width=800)
 
 # load all commits
 commit_list = list(repo.iter_commits())
+commit_list.sort(key=lambda c: c.committed_datetime.timestamp())
+pos = 0
+
 print("Commit list:")
 for c in commit_list :
     print(shorthash(c) + ": " + shortmsg(c))
-    net.add_node(str(c), label=shortmsg(c) )
+    ts = int(c.committed_datetime.timestamp())
+    net.add_node(str(c),    \
+        label=shortmsg(c),  \
+        title=c.message,    \
+        value=10,           \
+        y=pos)
+    pos = pos + 100
 
 # add edges between commits
 print("Adding edges:")

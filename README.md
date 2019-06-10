@@ -14,12 +14,13 @@ So, I want something more fuid. Something three-dimensional. Something *new*.
 
 # getting this to run
 
-git-3d connects [GitPython](https://github.com/gitpython-developers/GitPython) to [GraphTool](https://graph-tool.skewed.de/).
+git-3d connects [GitPython](https://github.com/gitpython-developers/GitPython) to [PyVis](https://pyvis.readthedocs.io/en/latest/index.html)
 So you need both of these.
 
-GitPython can be obtained from PyPi, `pip install GitPython`.
+GitPython can be obtained from PyPi, `pip3 install GitPython`.
 The global install on my Debian I did through `sudo apt update && sudo apt install python3-git`
-GraphTool comes as a submodule. So, do a
+
+My Deiban distro does not have a Pyvis package but I can `pip3 install pyvis` as well.
 
 ```
 git clone --recursive https://github.com/mgritz/git-3d.git && cd git-3d
@@ -32,7 +33,7 @@ git clone --recursive https://github.com/mgritz/git-3d.git && cd git-3d
 This is what I am going to do here:
 
 * Get GitPython to run and grab the git tree.
-* Get GraphTool to run and show this tree.
+* Get Grpahing to run and show this tree.
 * Add features to make this more dynamic.
 
 I am going to tweek this stuff to my personal needs first but suggestions are always welcome!

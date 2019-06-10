@@ -1,0 +1,64 @@
+#!/usr/bin/python3
+
+import sys
+import os
+import git
+import datetime
+from pyvis.network import Network
+
+def shorthash(commit) :
+    return str(commit)[0:5]
+
+def shortmsg(commit) :
+    return str(commit.message).split('\n',1)[0]
+
+repodir = os.getcwd()
+if len(sys.argv) == 2 :
+    repodir = sys.argv[1]
+
+print("git-3d has started for" + repodir)
+
+# load git repository
+repo = git.Repo(repodir)
+assert not repo.bare
+
+# init network graph object
+net = Network(height=800, width=800, directed=True)
+
+# load all commits
+commit_list = list(repo.iter_commits())
+commit_list.sort(key=lambda c: c.committed_datetime.timestamp())
+pos = 800
+
+print("Heads:")
+heads = list()
+for head in repo.heads :
+    print(str(head))
+    heads.append(str(head.commit))
+
+print("Commit list:")
+for c in commit_list :
+    print(shorthash(c) + ": " + shortmsg(c))
+    ts = int(c.committed_datetime.timestamp())
+
+    color = "#DAC148"
+    if str(c) in heads :
+        color = "#111111"
+
+    net.add_node(str(c),    \
+        label=shortmsg(c),  \
+        title=c.message,    \
+        color=color,        \
+        y=pos)
+    pos = pos - 100
+
+
+# add edges between commits
+for c in commit_list :
+    for p in c.parents :
+        net.add_edge(str(p), str(c))
+
+print("Showing Graph:")
+net.barnes_hut(central_gravity=0, spring_length=20)
+net.show_buttons(filter_=['physics'])
+net.show("/tmp/git3d-" + repodir.split('/')[-1] + ".html")

@@ -23,12 +23,12 @@ repo = git.Repo(repodir)
 assert not repo.bare
 
 # init network graph object
-net = Network(height=800, width=800)
+net = Network(height=800, width=800, directed=True)
 
 # load all commits
 commit_list = list(repo.iter_commits())
 commit_list.sort(key=lambda c: c.committed_datetime.timestamp())
-pos = 0
+pos = 800
 
 print("Commit list:")
 for c in commit_list :
@@ -39,14 +39,16 @@ for c in commit_list :
         title=c.message,    \
         value=10,           \
         y=pos)
-    pos = pos + 100
+    pos = pos - 100
+
 
 # add edges between commits
 print("Adding edges:")
 for c in commit_list :
     for p in c.parents :
-        print(shorthash(c) + " -> " + shorthash(p))
-        net.add_edge(str(c), str(p))
+        net.add_edge(str(p), str(c))
 
 print("Showing Graph:")
+net.barnes_hut(central_gravity=0, spring_length=20)
+net.show_buttons(filter_=['physics'])
 net.show("/tmp/git3d-" + repodir.split('/')[-1] + ".html")

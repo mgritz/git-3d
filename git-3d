@@ -30,20 +30,30 @@ commit_list = list(repo.iter_commits())
 commit_list.sort(key=lambda c: c.committed_datetime.timestamp())
 pos = 800
 
+print("Heads:")
+heads = list()
+for head in repo.heads :
+    print(str(head))
+    heads.append(str(head.commit))
+
 print("Commit list:")
 for c in commit_list :
     print(shorthash(c) + ": " + shortmsg(c))
     ts = int(c.committed_datetime.timestamp())
+
+    color = "#DAC148"
+    if str(c) in heads :
+        color = "#111111"
+
     net.add_node(str(c),    \
         label=shortmsg(c),  \
         title=c.message,    \
-        value=10,           \
+        color=color,        \
         y=pos)
     pos = pos - 100
 
 
 # add edges between commits
-print("Adding edges:")
 for c in commit_list :
     for p in c.parents :
         net.add_edge(str(p), str(c))

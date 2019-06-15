@@ -13,7 +13,28 @@ from OpenGL.GLU import *
 edges = list()
 nodes = dict()
 
+def hex2rgb(h) :
+    h = h.lstrip('#')
+    return tuple(int(h[i:i+2], 16) / 256 for i in (0, 2, 4))
+
 campos = (0,0,-10)
+def draw_diamond(p, size, color=(1,1,1)) :
+    glBegin(GL_TRIANGLE_STRIP)
+    glColor3fv(color)
+    glVertex3f((p[0] + size/2), (p[1] + size/2), p[2])
+    glVertex3f((p[0] - size/2), (p[1] + size/2), p[2])
+    glVertex3f(p[0], p[1], p[2] - size)
+    glVertex3f((p[0] + size/2), (p[1] - size/2), p[2])
+    glVertex3f((p[0] - size/2), (p[1] - size/2), p[2])
+    glVertex3f(p[0], p[1], p[2] + size)
+    glVertex3f((p[0] + size/2), (p[1] + size/2), p[2])
+    glVertex3f((p[0] + size/2), (p[1] - size/2), p[2])
+    glVertex3f(p[0], p[1], p[2] - size)
+    glVertex3f((p[0] - size/2), (p[1] + size/2), p[2])
+    glVertex3f((p[0] - size/2), (p[1] - size/2), p[2])
+    glVertex3f(p[0], p[1], p[2] + size)
+    glEnd()
+
 def update_camera(event) :
     camchange = (0,0,0)
     dirchange = (0,0)
@@ -122,7 +143,6 @@ gluPerspective(90, 1, 0.1, 100)
 glTranslatef(0,0, -10)
 glRotatef(25, 2, 1, 0)
 
-campos = [0,0,-10]
 redraw = True
 
 clock = pygame.time.Clock()
@@ -139,6 +159,12 @@ while True:
         continue
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+    for node, loc in nodes.items() :
+        if str(node) in heads :
+            draw_diamond(loc, 0.2, hex2rgb("#DAC148"))
+        else :
+            draw_diamond(loc, 0.2)
 
     glLineWidth(5)
     glBegin(GL_LINES)

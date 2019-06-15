@@ -14,16 +14,18 @@ So, I want something more fuid. Something three-dimensional. Something *new*.
 
 # getting this to run
 
-git-3d connects [GitPython](https://github.com/gitpython-developers/GitPython) to [PyVis](https://pyvis.readthedocs.io/en/latest/index.html)
-So you need both of these.
+After a brief experiment of using [PyVis](https://pyvis.readthedocs.io/en/latest/index.html), git-3d connects [GitPython](https://github.com/gitpython-developers/GitPython) to an OpenGL-based renderer and uses [pygame](https://www.pygame.org/) for the user interface.
 
 GitPython can be obtained from PyPi, `pip3 install GitPython`.
 The global install on my Debian I did through `sudo apt update && sudo apt install python3-git`
 
-My Deiban distro does not have a Pyvis package but I can `pip3 install pyvis` as well.
+Everything else I got via PyPi: `pip3 install pygame pyopengl`
+
+Then, do a 
 
 ```
 git clone --recursive https://github.com/mgritz/git-3d.git && cd git-3d
+./git-3d /path/to/your/repo/root
 ```
 
 **WIP!** This is under construction. Nothing is actually working right now.
@@ -32,8 +34,8 @@ git clone --recursive https://github.com/mgritz/git-3d.git && cd git-3d
 
 This is what I am going to do here:
 
-* Get GitPython to run and grab the git tree.
-* Get Grpahing to run and show this tree.
-* Add features to make this more dynamic.
+* [x] Get GitPython to run and grab the git tree.
+* [ ] Add a nize vizualization.
+* [ ] Add features to make this more dynamic.
 
 I am going to tweek this stuff to my personal needs first but suggestions are always welcome!

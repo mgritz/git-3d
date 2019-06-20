@@ -1,4 +1,8 @@
 from OpenGL.GL import *
+import pygame
+
+def shortmsg(commit) :
+    return str(commit.message).split('\n',1)[0]
 
 def draw_diamond(p, size, color=(1,1,1)) :
     glBegin(GL_TRIANGLE_STRIP)
@@ -16,6 +20,13 @@ def draw_diamond(p, size, color=(1,1,1)) :
     glVertex3f((p[0] - size/2), (p[1] - size/2), p[2])
     glVertex3f(p[0], p[1], p[2] + size)
     glEnd()
+
+def render_text(p, str) :
+    font = pygame.font.Font(None, 24)
+    textSurface = font.render(str, True, (255,255,255,255), (0,0,0,255))
+    textData = pygame.image.tostring(textSurface, "RGBA", True)
+    glRasterPos3fv(p)
+    glDrawPixels(textSurface.get_width(), textSurface.get_height(), GL_RGBA, GL_UNSIGNED_BYTE, textData)
 
 nodes = dict()
 
@@ -45,6 +56,7 @@ class YggCommit :
         assert self.position.__class__ == YggPosition
         assert self.hasPosition
         draw_diamond(self.position.toTuple(), 0.2, self.color)
+        render_text(self.position.toTuple(), shortmsg(self.c))
 
     def setPosition(self, p) :
         self.position = YggPosition(p)

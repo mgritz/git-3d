@@ -18,9 +18,6 @@ edges = list()
 def shorthash(commit) :
     return str(commit)[0:5]
 
-def shortmsg(commit) :
-    return str(commit.message).split('\n',1)[0]
-
 repodir = os.getcwd()
 if len(sys.argv) == 2 :
     repodir = sys.argv[1]

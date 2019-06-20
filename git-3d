@@ -5,6 +5,8 @@ import os
 import git
 import datetime
 
+from yggdrasil import *
+
 import pygame
 from pygame.locals import *
 from OpenGL.GL import *
@@ -13,28 +15,7 @@ from OpenGL.GLU import *
 edges = list()
 nodes = dict()
 
-def hex2rgb(h) :
-    h = h.lstrip('#')
-    return tuple(int(h[i:i+2], 16) / 256 for i in (0, 2, 4))
-
-campos = (0,0,-10)
-def draw_diamond(p, size, color=(1,1,1)) :
-    glBegin(GL_TRIANGLE_STRIP)
-    glColor3fv(color)
-    glVertex3f((p[0] + size/2), (p[1] + size/2), p[2])
-    glVertex3f((p[0] - size/2), (p[1] + size/2), p[2])
-    glVertex3f(p[0], p[1], p[2] - size)
-    glVertex3f((p[0] + size/2), (p[1] - size/2), p[2])
-    glVertex3f((p[0] - size/2), (p[1] - size/2), p[2])
-    glVertex3f(p[0], p[1], p[2] + size)
-    glVertex3f((p[0] + size/2), (p[1] + size/2), p[2])
-    glVertex3f((p[0] + size/2), (p[1] - size/2), p[2])
-    glVertex3f(p[0], p[1], p[2] - size)
-    glVertex3f((p[0] - size/2), (p[1] + size/2), p[2])
-    glVertex3f((p[0] - size/2), (p[1] - size/2), p[2])
-    glVertex3f(p[0], p[1], p[2] + size)
-    glEnd()
-
+campos = list((0,0,-10))
 def update_camera(event) :
     camchange = (0,0,0)
     dirchange = (0,0)
@@ -124,11 +105,11 @@ for c in commit_list :
     print(shorthash(c) + ": " + shortmsg(c))
     ts = int(c.committed_datetime.timestamp())
 
-    color = "#DAC148"
+    ygg_c = YggCommit(c)
+    ygg_c.position = (0,0,pos)
     if str(c) in heads :
-        color = "#111111"
-
-    nodes[str(c)] = (0, 0, pos)
+        ygg_c.setColorFromString("DAC148")
+    nodes[str(c)] = ygg_c
     pos = pos + 1
 
 # add edges between commits
@@ -160,17 +141,14 @@ while True:
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    for node, loc in nodes.items() :
-        if str(node) in heads :
-            draw_diamond(loc, 0.2, hex2rgb("#DAC148"))
-        else :
-            draw_diamond(loc, 0.2)
+    for node, ygg_c in nodes.items() :
+        ygg_c.draw()
 
     glLineWidth(5)
     glBegin(GL_LINES)
     for edge in edges :
         for vertex in edge :
-            glVertex3fv(nodes[vertex])
+            glVertex3fv(nodes[vertex].position)
     glEnd()
     pygame.display.flip()
     redraw = False

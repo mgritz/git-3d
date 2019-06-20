@@ -20,8 +20,8 @@ def draw_diamond(p, size, color=(1,1,1)) :
 class YggCommit :
     def __init__(self, commit) :
         self.c = commit
-        self.color = (1,1,1)
         self.position = (0,0,0)
+        self.color = (.5,.5,.5)
 
     def __hex2rgb(self, h) :
         h = h.lstrip('#')

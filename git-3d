@@ -14,8 +14,6 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 
 edges = list()
-nodes = dict()
-
 
 def shorthash(commit) :
     return str(commit)[0:5]
@@ -36,7 +34,6 @@ assert not repo.bare
 # load all commits
 commit_list = list(repo.iter_commits())
 commit_list.sort(key=lambda c: c.committed_datetime.timestamp())
-pos = 0
 
 print("Heads:")
 heads = list()
@@ -45,21 +42,33 @@ for head in repo.heads :
     heads.append(str(head.commit))
 
 print("Commit list:")
+# create commit objects for these.
 for c in commit_list :
     print(shorthash(c) + ": " + shortmsg(c))
-    ts = int(c.committed_datetime.timestamp())
-
     ygg_c = YggCommit(c)
-    ygg_c.position = (0,0,pos)
-    if str(c) in heads :
+    if str(c) in heads : # is head
         ygg_c.setColorFromString("DAC148")
+    elif len(c.parents) == 2 : # is merge
+        ygg_c.color = (1,1,1)
+    elif len(c.parents) == 0 : # is initial
+        ygg_c.color = (0,1,0)
+    # append commit to node list
     nodes[str(c)] = ygg_c
-    pos = pos + 1
-
-# add edges between commits
-for c in commit_list :
+    # log edges to parents
     for p in c.parents :
         edges.append((str(p), str(c)))
+
+
+
+# generate graph, that is, select positions for the commits
+# Starting from each head.
+hc = 0
+for head in heads :
+    level = 0
+    parallel = 0
+    nodes[head].placeTree(hc, level, parallel)
+    hc = hc + 1
+
 
 print("Showing Graph:")
 pygame.init()

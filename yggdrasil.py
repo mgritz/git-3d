@@ -17,6 +17,8 @@ def draw_diamond(p, size, color=(1,1,1)) :
     glVertex3f(p[0], p[1], p[2] + size)
     glEnd()
 
+nodes = dict()
+
 class YggPosition :
     def __init__(self, p) :
         self.x = p[0]
@@ -48,3 +50,11 @@ class YggCommit :
         self.position = YggPosition(p)
         self.hasPosition = True
 
+    def placeTree(self, head, level, parallel) :
+        if self.hasPosition :
+            return
+        self.setPosition((head, parallel, level))
+        par = parallel
+        for p in self.c.parents :
+            nodes[str(p)].placeTree(head, level + 1, par)
+            par = par + 1

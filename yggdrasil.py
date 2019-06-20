@@ -17,11 +17,20 @@ def draw_diamond(p, size, color=(1,1,1)) :
     glVertex3f(p[0], p[1], p[2] + size)
     glEnd()
 
+class YggPosition :
+    def __init__(self, p) :
+        self.x = p[0]
+        self.y = p[1]
+        self.z = p[2]
+
+    def toTuple(self) :
+        return (self.x, self.y, self.z)
+
 class YggCommit :
     def __init__(self, commit) :
         self.c = commit
-        self.position = (0,0,0)
         self.color = (.5,.5,.5)
+        self.hasPosition = False
 
     def __hex2rgb(self, h) :
         h = h.lstrip('#')
@@ -31,4 +40,11 @@ class YggCommit :
         self.color = self.__hex2rgb(colorstring)
 
     def draw(self) :
-        draw_diamond(self.position, 0.2, self.color)
+        assert self.position.__class__ == YggPosition
+        assert self.hasPosition
+        draw_diamond(self.position.toTuple(), 0.2, self.color)
+
+    def setPosition(self, p) :
+        self.position = YggPosition(p)
+        self.hasPosition = True
+

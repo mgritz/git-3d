@@ -86,7 +86,7 @@ while True:
     glBegin(GL_LINES)
     for edge in edges :
         for vertex in edge :
-            glVertex3fv(nodes[vertex].position)
+            glVertex3fv(nodes[vertex].position.toTuple())
     glEnd()
     pygame.display.flip()
     redraw = False
